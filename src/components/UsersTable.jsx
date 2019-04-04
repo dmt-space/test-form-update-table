@@ -110,9 +110,19 @@ UsersTableHead.propTypes = {
   rowCount: PropTypes.number.isRequired,
 };
 
-const toolbarStyles = theme => ({
+const styles = theme => ({
   root: {
+    width: '100%',
+    marginTop: theme.spacing.unit * 3,
+  },
+  root2: {
     paddingRight: theme.spacing.unit,
+  },
+  table: {
+    minWidth: 1020,
+  },
+  tableWrapper: {
+    overflowX: 'auto',
   },
   highlight:
     theme.palette.type === 'light'
@@ -132,66 +142,6 @@ const toolbarStyles = theme => ({
   },
   title: {
     flex: '0 0 auto',
-  },
-});
-
-let UsersTableToolbar = props => {
-  const { numSelected, classes } = props;
-
-  return (
-    <Toolbar
-      className={classNames(classes.root, {
-        [classes.highlight]: numSelected > 0,
-      })}
-    >
-      <div className={classes.title}>
-        {numSelected > 0 ? (
-          <Typography color="inherit" variant="subtitle1">
-            {numSelected} selected
-          </Typography>
-        ) : (
-          <Typography variant="h6" id="tableTitle">
-            Users
-          </Typography>
-        )}
-      </div>
-      <div className={classes.spacer} />
-      <div className={classes.actions}>
-        {numSelected > 0 ? (
-          <Tooltip title="Delete">
-            <IconButton aria-label="Delete">
-              <DeleteIcon />
-            </IconButton>
-          </Tooltip>
-        ) : (
-          <Tooltip title="Filter list">
-            <IconButton aria-label="Filter list">
-              <FilterListIcon />
-            </IconButton>
-          </Tooltip>
-        )}
-      </div>
-    </Toolbar>
-  );
-};
-
-UsersTableToolbar.propTypes = {
-  classes: PropTypes.object.isRequired,
-  numSelected: PropTypes.number.isRequired,
-};
-
-UsersTableToolbar = withStyles(toolbarStyles)(UsersTableToolbar);
-
-const styles = theme => ({
-  root: {
-    width: '100%',
-    marginTop: theme.spacing.unit * 3,
-  },
-  table: {
-    minWidth: 1020,
-  },
-  tableWrapper: {
-    overflowX: 'auto',
   },
 });
 
@@ -237,6 +187,7 @@ class UsersTable extends React.Component {
   };
 
   handleClick = (event, id) => {
+    console.log('############');
     const { selected } = this.state;
     const selectedIndex = selected.indexOf(id);
     let newSelected = [];
@@ -265,18 +216,54 @@ class UsersTable extends React.Component {
     this.setState({ rowsPerPage: event.target.value });
   };
 
+  handleDeleteUsers = (event) => {
+    this.state.selected.map(n=>db.users.delete(this.state.data[n].id).catch(function (err) { console.log(err) }));
+    window.location.reload();
+  }
+
   isSelected = id => this.state.selected.indexOf(id) !== -1;
 
   render() {
     const { classes } = this.props;
     const { data, order, orderBy, selected, rowsPerPage, page } = this.state;
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
-
-    console.log(this.state.data);
+    
 
     return (
       <Paper className={classes.root}>
-        <UsersTableToolbar numSelected={selected.length} />
+        <Toolbar
+      className={classNames(classes.root2, {
+        [classes.highlight]: selected.length > 0,
+      })}
+    >
+      <div className={classes.title}>
+        {selected.length > 0 ? (
+          <Typography color="inherit" variant="subtitle1">
+            {selected.length} selected
+          </Typography>
+        ) : (
+          <Typography variant="h6" id="tableTitle">
+            Users
+          </Typography>
+        )}
+      </div>
+      <div className={classes.spacer} />
+      <div className={classes.actions}>
+        {selected.length > 0 ? (
+          <Tooltip title="Delete">
+            <IconButton aria-label="Delete" onClick={this.handleDeleteUsers}>
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        ) : (
+          <Tooltip title="Filter list">
+            <IconButton aria-label="Filter list">
+              <FilterListIcon />
+            </IconButton>
+          </Tooltip>
+        )}
+      </div>
+    </Toolbar>
         <div className={classes.tableWrapper}>
           <Table className={classes.table} aria-labelledby="tableTitle">
             <UsersTableHead
