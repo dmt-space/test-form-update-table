@@ -47,8 +47,8 @@ function getSorting(order, orderBy) {
 
 const rows = [
   { id: 'fname', numeric: false, disablePadding: true, label: 'First Name' },
-  { id: 'lname', numeric: false, disablePadding: false, label: 'Last Name' },
-  { id: 'phone', numeric: false, disablePadding: false, label: 'Phone' },
+  { id: 'lname', numeric: true, disablePadding: false, label: 'Last Name' },
+  { id: 'phone', numeric: true, disablePadding: false, label: 'Phone' },
   { id: 'age', numeric: true, disablePadding: false, label: 'Age' },
 ];
 
