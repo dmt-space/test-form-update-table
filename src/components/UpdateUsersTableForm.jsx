@@ -82,7 +82,7 @@ class UpdateUsersTableForm extends React.Component {
                     onChange={this.handleChange}
                     name="phone"
                     value={formData.phone}
-                    validators={['required', 'minStringLength:18']}
+                    validators={['required', 'minStringLength:17']}
                     errorMessages={['this field is required', 'Phone is not valid']}
                 />
                 <br />
